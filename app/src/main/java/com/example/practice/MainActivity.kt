@@ -7,10 +7,19 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.NavType
+import com.example.practice.ui.BottomBar
+import com.example.practice.ui.detail.DetailScreen
+import com.example.practice.ui.list.ListScreen
+import com.example.practice.ui.list.ListViewModel
 import com.example.practice.ui.theme.PracticeTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +28,46 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PracticeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                val navController = rememberNavController()
+                val listViewModel: ListViewModel = viewModel()
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = { BottomBar(navController) }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = "home",
                         modifier = Modifier.padding(innerPadding)
-                    )
+                    ) {
+                        // Tab 1: home stack (list + detail)
+                        composable("home") {
+                            ListScreen(
+                                viewModel = listViewModel,
+                                onItemClick = { itemId ->
+                                    navController.navigate("home/detail/$itemId")
+                                }
+                            )
+                        }
+                        composable(
+                            route = "home/detail/{itemId}",
+                            arguments = listOf(navArgument("itemId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("itemId") ?: ""
+                            DetailScreen(viewModel = listViewModel, itemId = id)
+                        }
+
+                        // Tab 2: search placeholder
+                        composable("search") {
+                            androidx.compose.material3.Text("Экран поиска (заглушка)")
+                        }
+
+                        // Tab 3: settings placeholder
+                        composable("settings") {
+                            androidx.compose.material3.Text("Экран настроек (заглушка)")
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PracticeTheme {
-        Greeting("Android")
     }
 }
