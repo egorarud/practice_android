@@ -59,7 +59,7 @@ class MockStudiosRepository : StudiosRepository {
     override fun getStudioById(id: String): Studio? = studios.firstOrNull { it.id == id }
 }
 
-data class ListUiState(
+data class MockListUiState(
     val isLoading: Boolean = false,
     val items: List<Studio> = emptyList(),
     val total: Int = 0
@@ -68,8 +68,8 @@ data class ListUiState(
 class ListViewModel(
     private val repository: StudiosRepository = MockStudiosRepository()
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ListUiState())
-    val uiState: StateFlow<ListUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(MockListUiState())
+    val uiState: StateFlow<MockListUiState> = _uiState.asStateFlow()
 
     private val _selectedItem = MutableStateFlow<Studio?>(null)
     val selectedItem: StateFlow<Studio?> = _selectedItem.asStateFlow()
@@ -82,7 +82,7 @@ class ListViewModel(
         _uiState.value = _uiState.value.copy(isLoading = true)
         viewModelScope.launch {
             val page = repository.getStudiosPage()
-            _uiState.value = ListUiState(isLoading = false, items = page.docs, total = page.total)
+            _uiState.value = MockListUiState(isLoading = false, items = page.docs, total = page.total)
         }
     }
 

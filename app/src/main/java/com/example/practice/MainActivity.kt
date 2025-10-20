@@ -10,7 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -19,9 +19,11 @@ import androidx.navigation.NavType
 import com.example.practice.ui.BottomBar
 import com.example.practice.ui.detail.DetailScreen
 import com.example.practice.ui.list.ListScreen
-import com.example.practice.ui.list.ListViewModel
+import com.example.practice.ui.list.NetworkListViewModel
 import com.example.practice.ui.theme.PracticeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +31,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PracticeTheme {
                 val navController = rememberNavController()
-                val listViewModel: ListViewModel = viewModel()
+                val listViewModel: NetworkListViewModel = hiltViewModel()
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = { BottomBar(navController) }
