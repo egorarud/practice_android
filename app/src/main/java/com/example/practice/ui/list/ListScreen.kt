@@ -1,6 +1,6 @@
 package com.example.practice.ui.list
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ListItem
@@ -21,20 +24,42 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.practice.data.cache.FilterBadgeCache
+import com.example.practice.data.cache.FilterBadgeCacheEntryPoint
+import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.launch
 
 @Composable
 fun ListScreen(
-    onItemClick: (String) -> Unit
+    onItemClick: (String) -> Unit,
+    onFiltersClick: () -> Unit = {}
 ) {
     val viewModel: NetworkListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    
+    // Получаем FilterBadgeCache через LocalContext
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val hiltEntryPoint = remember {
+        EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            FilterBadgeCacheEntryPoint::class.java
+        )
+    }
+    val filterBadgeCache = remember { hiltEntryPoint.filterBadgeCache() }
+    val hasActiveFilters by filterBadgeCache.hasActiveFilters.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showAddToFavoritesDialog by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
 
     // Показываем ошибку в Snackbar
     LaunchedEffect(uiState.error) {
@@ -58,11 +83,30 @@ fun ListScreen(
                     style = MaterialTheme.typography.headlineSmall
                 )
                 
-                Button(
-                    onClick = { viewModel.refreshItems() },
-                    enabled = !uiState.isLoading
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("Обновить")
+                    BadgedBox(
+                        badge = {
+                            if (hasActiveFilters) {
+                                Badge()
+                            }
+                        }
+                    ) {
+                        Button(
+                            onClick = onFiltersClick,
+                            enabled = !uiState.isLoading
+                        ) {
+                            Text("Фильтры")
+                        }
+                    }
+                    
+                    Button(
+                        onClick = { viewModel.refreshItems() },
+                        enabled = !uiState.isLoading
+                    ) {
+                        Text("Обновить")
+                    }
                 }
             }
 
@@ -98,7 +142,14 @@ fun ListScreen(
                                 supportingContent = { Text("${studio.subType} • ${studio.type}") },
                                 trailingContent = { Text("Фильмы: ${studio.movies.size}") },
                                 modifier = Modifier
-                                    .clickable { onItemClick(studio.id) }
+                                    .pointerInput(studio.id) {
+                                        detectTapGestures(
+                                            onTap = { onItemClick(studio.id) },
+                                            onLongPress = { 
+                                                showAddToFavoritesDialog = studio.id 
+                                            }
+                                        )
+                                    }
                             )
                         }
                         
@@ -132,6 +183,38 @@ fun ListScreen(
             hostState = snackbarHostState,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
+        
+        // Диалог добавления в избранное
+        showAddToFavoritesDialog?.let { studioId ->
+            val studio = uiState.items.find { it.id == studioId }
+            AlertDialog(
+                onDismissRequest = { showAddToFavoritesDialog = null },
+                title = { Text("Добавить в избранное") },
+                text = { 
+                    Text("Вы хотите добавить студию \"${studio?.title ?: ""}\" в избранное?") 
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                viewModel.addToFavorites(studioId)
+                                snackbarHostState.showSnackbar("Добавлено в избранное")
+                            }
+                            showAddToFavoritesDialog = null
+                        }
+                    ) {
+                        Text("Добавить")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { showAddToFavoritesDialog = null }
+                    ) {
+                        Text("Отмена")
+                    }
+                }
+            )
+        }
     }
 }
 

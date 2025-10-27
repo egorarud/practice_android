@@ -1,7 +1,10 @@
 package com.example.practice.di
 
 import com.example.practice.data.api.StudiosApi
+import com.example.practice.data.cache.FilterBadgeCache
+import com.example.practice.data.repository.FavoritesRepositoryImpl
 import com.example.practice.data.repository.NetworkStudiosRepository
+import com.example.practice.domain.repository.FavoritesRepository
 import com.example.practice.domain.repository.StudiosRepository
 import dagger.Binds
 import dagger.Module
@@ -24,6 +27,11 @@ abstract class NetworkModule {
     abstract fun bindStudiosRepository(
         networkStudiosRepository: NetworkStudiosRepository
     ): StudiosRepository
+    
+    @Binds
+    abstract fun bindFavoritesRepository(
+        favoritesRepositoryImpl: FavoritesRepositoryImpl
+    ): FavoritesRepository
     
     companion object {
         
@@ -64,6 +72,12 @@ abstract class NetworkModule {
         @Singleton
         fun provideStudiosApi(retrofit: Retrofit): StudiosApi {
             return retrofit.create(StudiosApi::class.java)
+        }
+        
+        @Provides
+        @Singleton
+        fun provideFilterBadgeCache(): FilterBadgeCache {
+            return FilterBadgeCache()
         }
     }
 }
