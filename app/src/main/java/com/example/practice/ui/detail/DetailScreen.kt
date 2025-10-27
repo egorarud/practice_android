@@ -30,13 +30,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.practice.ui.list.NetworkListViewModel
 
 @Composable
 fun DetailScreen(
-    viewModel: NetworkListViewModel,
     itemId: String
 ) {
+    val viewModel: NetworkListViewModel = hiltViewModel()
     val detailState by viewModel.detailState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 

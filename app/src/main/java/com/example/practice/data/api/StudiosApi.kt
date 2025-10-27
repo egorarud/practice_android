@@ -9,7 +9,7 @@ import retrofit2.http.Query
 
 interface StudiosApi {
     // https://api.kinopoisk.dev/v1.4/studio?page=1&limit=50
-    @GET("v1.4/studioв")
+    @GET("v1.4/studio")
     suspend fun getStudiosPage(
         @Query("page") page: Int = 1,
         @Query("limit") limit: Int = 50
