@@ -10,7 +10,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -19,9 +18,10 @@ import androidx.navigation.NavType
 import com.example.practice.ui.BottomBar
 import com.example.practice.ui.detail.DetailScreen
 import com.example.practice.ui.list.ListScreen
-import com.example.practice.ui.list.ListViewModel
 import com.example.practice.ui.theme.PracticeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +29,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             PracticeTheme {
                 val navController = rememberNavController()
-                val listViewModel: ListViewModel = viewModel()
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = { BottomBar(navController) }
@@ -42,7 +41,6 @@ class MainActivity : ComponentActivity() {
                         // Tab 1: home stack (list + detail)
                         composable("home") {
                             ListScreen(
-                                viewModel = listViewModel,
                                 onItemClick = { itemId ->
                                     navController.navigate("home/detail/$itemId")
                                 }
@@ -53,7 +51,7 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("itemId") { type = NavType.StringType })
                         ) { backStackEntry ->
                             val id = backStackEntry.arguments?.getString("itemId") ?: ""
-                            DetailScreen(viewModel = listViewModel, itemId = id)
+                            DetailScreen(itemId = id)
                         }
 
                         // Tab 2: search placeholder
