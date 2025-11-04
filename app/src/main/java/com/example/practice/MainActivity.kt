@@ -17,6 +17,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.NavType
 import com.example.practice.ui.BottomBar
 import com.example.practice.ui.detail.DetailScreen
+import com.example.practice.ui.favorites.FavoritesScreen
+import com.example.practice.ui.filter.FilterScreen
 import com.example.practice.ui.list.ListScreen
 import com.example.practice.ui.theme.PracticeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +45,16 @@ class MainActivity : ComponentActivity() {
                             ListScreen(
                                 onItemClick = { itemId ->
                                     navController.navigate("home/detail/$itemId")
+                                },
+                                onFiltersClick = {
+                                    navController.navigate("home/filters")
+                                }
+                            )
+                        }
+                        composable("home/filters") {
+                            FilterScreen(
+                                onBack = {
+                                    navController.popBackStack()
                                 }
                             )
                         }
@@ -54,9 +66,20 @@ class MainActivity : ComponentActivity() {
                             DetailScreen(itemId = id)
                         }
 
-                        // Tab 2: search placeholder
-                        composable("search") {
-                            androidx.compose.material3.Text("Экран поиска (заглушка)")
+                        // Tab 2: favorites
+                        composable("favorites") {
+                            FavoritesScreen(
+                                onItemClick = { itemId ->
+                                    navController.navigate("favorites/detail/$itemId")
+                                }
+                            )
+                        }
+                        composable(
+                            route = "favorites/detail/{itemId}",
+                            arguments = listOf(navArgument("itemId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("itemId") ?: ""
+                            DetailScreen(itemId = id)
                         }
 
                         // Tab 3: settings placeholder

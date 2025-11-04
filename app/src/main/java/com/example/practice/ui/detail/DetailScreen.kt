@@ -23,6 +23,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,7 +72,11 @@ fun DetailScreen(
                 )
             }
             detailState.studio != null -> {
-                DetailContent(detailState.studio)
+                DetailContent(
+                    studio = detailState.studio,
+                    viewModel = viewModel,
+                    snackbarHostState = snackbarHostState
+                )
             }
             else -> {
                 ErrorScreen(
@@ -88,7 +94,12 @@ fun DetailScreen(
 }
 
 @Composable
-private fun DetailContent(studio: com.example.practice.domain.model.Studio?) {
+private fun DetailContent(
+    studio: com.example.practice.domain.model.Studio?,
+    viewModel: NetworkListViewModel,
+    snackbarHostState: SnackbarHostState
+) {
+    val scope = rememberCoroutineScope()
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
@@ -181,7 +192,17 @@ private fun DetailContent(studio: com.example.practice.domain.model.Studio?) {
             Button(onClick = { /* TODO: share */ }, modifier = Modifier.weight(1f)) {
                 Text("Поделиться")
             }
-            Button(onClick = { /* TODO: favorite */ }, modifier = Modifier.weight(1f)) {
+            Button(
+                onClick = { 
+                    studio?.let {
+                        scope.launch {
+                            viewModel.addToFavorites(it.id)
+                            snackbarHostState.showSnackbar("Добавлено в избранное")
+                        }
+                    }
+                }, 
+                modifier = Modifier.weight(1f)
+            ) {
                 Text("В избранное")
             }
         }
