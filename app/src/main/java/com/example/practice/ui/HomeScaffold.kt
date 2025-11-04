@@ -3,7 +3,7 @@ package com.example.practice.ui
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -25,7 +25,7 @@ data class BottomDestination(
 val bottomDestinations = listOf(
     BottomDestination("home", "Главная", Icons.Filled.Home),
     BottomDestination("favorites", "Избранное", Icons.Filled.Favorite),
-    BottomDestination("settings", "Настройки", Icons.Filled.Settings)
+    BottomDestination("profile", "Профиль", Icons.Filled.AccountCircle)
 )
 
 @Composable

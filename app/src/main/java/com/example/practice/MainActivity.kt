@@ -82,9 +82,16 @@ class MainActivity : ComponentActivity() {
                             DetailScreen(itemId = id)
                         }
 
-                        // Tab 3: settings placeholder
-                        composable("settings") {
-                            androidx.compose.material3.Text("Экран настроек (заглушка)")
+                        // Tab 3: profile
+                        composable("profile") {
+                            com.example.practice.ui.profile.ProfileScreen(
+                                onEdit = { navController.navigate("profile/edit") }
+                            )
+                        }
+                        composable("profile/edit") {
+                            com.example.practice.ui.profile.EditProfileScreen(
+                                onDone = { navController.popBackStack() }
+                            )
                         }
                     }
                 }
