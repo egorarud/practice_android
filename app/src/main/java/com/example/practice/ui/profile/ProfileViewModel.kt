@@ -44,11 +44,12 @@ class ProfileViewModel @Inject constructor(
         _profile.update { it.copy(avatarUri = uriString) }
     }
 
-    fun save() {
-        val current = _profile.value
-        viewModelScope.launch {
-            repository.saveProfile(current)
-        }
+    fun updateFavoritePairTime(value: String) {
+        _profile.update { it.copy(favoritePairTime = value) }
+    }
+
+    suspend fun save() {
+        repository.saveProfile(_profile.value)
     }
 }
 

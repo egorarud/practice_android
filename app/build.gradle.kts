@@ -71,6 +71,7 @@ dependencies {
     // Dependency Injection
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.compose.foundation)
     ksp(libs.hilt.compiler)
     
     // DataStore
