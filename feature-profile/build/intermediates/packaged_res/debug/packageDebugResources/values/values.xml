@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="favorite_pair_exact_alarm_permission_rationale">Разрешите точные будильники для напоминаний о любимой паре</string>
+    <string name="favorite_pair_notification_body_generic">Не забудьте о своей любимой паре!</string>
+    <string name="favorite_pair_notification_body_named">Не забудьте о паре %1$s</string>
+    <string name="favorite_pair_notification_channel_description">Уведомления о начале любимой пары</string>
+    <string name="favorite_pair_notification_channel_name">Напоминания о парах</string>
+    <string name="favorite_pair_notification_title">Начинается любимая пара</string>
+    <string name="favorite_pair_notifications_permission_denied">Без разрешения на уведомления напоминание не сработает</string>
+    <string name="favorite_pair_notifications_permission_rationale">Разрешите уведомления, чтобы мы смогли напомнить о любимой паре</string>
+    <string name="favorite_pair_time_error_empty">Укажите время в формате ЧЧ:ММ</string>
+    <string name="favorite_pair_time_error_format">Используйте формат ЧЧ:ММ</string>
+    <string name="favorite_pair_time_label">Время любимой пары</string>
+</resources>

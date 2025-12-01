@@ -1,0 +1,17 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.practice.feature.profile" >
+4
+5    <uses-sdk android:minSdkVersion="24" />
+6
+7    <application>
+7-->C:\AndroidProjects\practice\feature-profile\src\main\AndroidManifest.xml:5:5-9:19
+8        <receiver
+8-->C:\AndroidProjects\practice\feature-profile\src\main\AndroidManifest.xml:6:9-8:40
+9            android:name="com.example.practice.notification.FavoritePairReminderReceiver"
+9-->C:\AndroidProjects\practice\feature-profile\src\main\AndroidManifest.xml:7:13-90
+10            android:exported="false" />
+10-->C:\AndroidProjects\practice\feature-profile\src\main\AndroidManifest.xml:8:13-37
+11    </application>
+12
+13</manifest>
